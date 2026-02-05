@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bodegas {
+  codigo_bodega                                   String        @id @db.VarChar(30)
+  nombre_bodega                                   String        @db.VarChar(120)
+  ubicacion                                       String?       @db.VarChar(200)
+  estado                                          Boolean       @default(true)
+  movimientos_movimientos_bodega_destinoTobodegas movimientos[] @relation("movimientos_bodega_destinoTobodegas")
+  movimientos_movimientos_bodega_origenTobodegas  movimientos[] @relation("movimientos_bodega_origenTobodegas")
+  stock                                           stock[]
+}
+
+model configuracion {
+  identificacion String   @id @db.VarChar(30)
+  nombre_sistema String   @db.VarChar(120)
+  ubicacion      String?  @db.VarChar(200)
+  updated_at     DateTime @default(now()) @db.Timestamptz(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model movimiento_detalle {
+  codigo_movimiento String      @db.VarChar(40)
+  item              Int
+  referencia        String      @db.VarChar(60)
+  talla             String      @db.VarChar(20)
+  cantidad          Int
+  valor_unitario    Decimal     @db.Decimal(12, 2)
+  movimientos       movimientos @relation(fields: [codigo_movimiento], references: [codigo_movimiento], onDelete: NoAction, onUpdate: NoAction)
+  productos         productos   @relation(fields: [referencia], references: [referencia], onDelete: NoAction, onUpdate: NoAction)
+  tallas            tallas      @relation(fields: [talla], references: [talla], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([codigo_movimiento, item])
+  @@index([referencia, talla], map: "idx_det_ref_talla")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model movimientos {
+  codigo_movimiento                           String               @id @db.VarChar(40)
+  tipo                                        tipo_movimiento
+  fecha                                       DateTime             @default(now()) @db.Timestamptz(6)
+  responsable                                 String               @db.VarChar(30)
+  bodega_origen                               String?              @db.VarChar(30)
+  bodega_destino                              String?              @db.VarChar(30)
+  observacion                                 String?
+  movimiento_detalle                          movimiento_detalle[]
+  bodegas_movimientos_bodega_destinoTobodegas bodegas?             @relation("movimientos_bodega_destinoTobodegas", fields: [bodega_destino], references: [codigo_bodega], onDelete: NoAction, onUpdate: NoAction)
+  bodegas_movimientos_bodega_origenTobodegas  bodegas?             @relation("movimientos_bodega_origenTobodegas", fields: [bodega_origen], references: [codigo_bodega], onDelete: NoAction, onUpdate: NoAction)
+  usuarios                                    usuarios             @relation(fields: [responsable], references: [identificacion], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([fecha], map: "idx_movimientos_fecha")
+  @@index([tipo, fecha], map: "idx_movimientos_tipo_fecha")
+}
+
+model permisos {
+  codigo_permiso   String             @id @db.VarChar(30)
+  nombre_permiso   String             @db.VarChar(80)
+  modulo_asociado  String             @db.VarChar(80)
+  rol_permisos     rol_permisos[]
+  usuario_permisos usuario_permisos[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model productos {
+  referencia         String               @id @db.VarChar(60)
+  descripcion        String?              @db.VarChar(300)
+  imagen_url         String?
+  estado             Boolean              @default(true)
+  precio_base        Decimal?             @db.Decimal(12, 2)
+  movimiento_detalle movimiento_detalle[]
+  stock              stock[]
+}
+
+model rol_permisos {
+  codigo_rol     String   @db.VarChar(30)
+  codigo_permiso String   @db.VarChar(30)
+  permisos       permisos @relation(fields: [codigo_permiso], references: [codigo_permiso], onDelete: NoAction, onUpdate: NoAction)
+  roles          roles    @relation(fields: [codigo_rol], references: [codigo_rol], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([codigo_rol, codigo_permiso])
+}
+
+model roles {
+  codigo_rol    String          @id @db.VarChar(30)
+  nombre        String          @db.VarChar(80)
+  rol_permisos  rol_permisos[]
+  usuario_roles usuario_roles[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model stock {
+  codigo_bodega String    @db.VarChar(30)
+  referencia    String    @db.VarChar(60)
+  talla         String    @db.VarChar(20)
+  cantidad      Int       @default(0)
+  bodegas       bodegas   @relation(fields: [codigo_bodega], references: [codigo_bodega], onDelete: NoAction, onUpdate: NoAction)
+  productos     productos @relation(fields: [referencia], references: [referencia], onDelete: NoAction, onUpdate: NoAction)
+  tallas        tallas    @relation(fields: [talla], references: [talla], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([codigo_bodega, referencia, talla])
+  @@index([referencia, talla], map: "idx_stock_ref_talla")
+}
+
+model tallas {
+  talla              String               @id @db.VarChar(20)
+  movimiento_detalle movimiento_detalle[]
+  stock              stock[]
+}
+
+model usuario_permisos {
+  identificacion String   @db.VarChar(30)
+  codigo_permiso String   @db.VarChar(30)
+  permisos       permisos @relation(fields: [codigo_permiso], references: [codigo_permiso], onDelete: NoAction, onUpdate: NoAction)
+  usuarios       usuarios @relation(fields: [identificacion], references: [identificacion], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([identificacion, codigo_permiso])
+}
+
+model usuario_roles {
+  identificacion String   @db.VarChar(30)
+  codigo_rol     String   @db.VarChar(30)
+  roles          roles    @relation(fields: [codigo_rol], references: [codigo_rol], onDelete: NoAction, onUpdate: NoAction)
+  usuarios       usuarios @relation(fields: [identificacion], references: [identificacion], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([identificacion, codigo_rol])
+}
+
+model usuarios {
+  identificacion   String             @id @db.VarChar(30)
+  nombre_completo  String             @db.VarChar(150)
+  password_hash    String
+  estado           Boolean            @default(true)
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  movimientos      movimientos[]
+  usuario_permisos usuario_permisos[]
+  usuario_roles    usuario_roles[]
+}
+
+enum tipo_movimiento {
+  ENTRADA
+  VENTA
+  TRASPASO
+}
