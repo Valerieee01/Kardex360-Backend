@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma";
+import { prisma } from "../../db/prisma";
 
 export const bodegaRepository = {
   findAll: () => prisma.bodegas.findMany(),

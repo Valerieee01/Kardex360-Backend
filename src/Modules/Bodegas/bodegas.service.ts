@@ -1,4 +1,4 @@
-import { bodegaRepository } from "../repositories/bodega.repository";
+import { bodegaRepository } from "./bodegas.repository";
 
 export const bodegasService = {
   list: () => bodegaRepository.findAll(),
