@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { usuariosService } from "./usuarios.service";
+import { productosService } from "./productos.service";
 
-export const usuariosController = {
+export const productosController = {
   list: async (_req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await usuariosService.list();
+      const data = await productosService.list();
       res.json({ ok: true, data });
     } catch (err) {
       next(err);

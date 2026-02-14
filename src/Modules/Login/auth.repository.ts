@@ -17,6 +17,7 @@ export class AuthRepository {
             roles: {
               select: {
                 codigo_rol: true, 
+                nombre : true
               },
             },
           },

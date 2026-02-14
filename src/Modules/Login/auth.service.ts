@@ -23,19 +23,18 @@ export class AuthService {
     // evita user enumeration: mismo mensaje para todo
     if (!user) throw new Error("INVALID_CREDENTIALS");
 
-    // Si manejas estado (soft-disable), corta aquí
     if (typeof user.estado !== "undefined" && user.estado !== true) {
       throw new Error("USER_DISABLED");
     }
 
-    const hash = (user as any).password_hash as string | null; // ajusta si tu select usa otro nombre
+    const hash = (user as any).password_hash as string | null; 
     if (!hash) throw new Error("INVALID_CREDENTIALS");
 
     const ok = await bcrypt.compare(input.password, hash);
     if (!ok) throw new Error("INVALID_CREDENTIALS");
 
     const roles = (user.usuario_roles ?? [])
-      .map((ur: any) => ur.roles?.codigo)
+      .map((ur: any) => ur.roles?.codigo_rol)
       .filter(Boolean) as RoleCode[];
 
     const payload: JwtPayloadShape = {
