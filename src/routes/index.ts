@@ -8,6 +8,8 @@ import movimientosRoutes from "../Modules/Inventario/inventario.routes";
 import tallasRouter from "../Modules/Tallas/tallas.routes";
 import ConfiguracionRoutes from  "../Modules/Configuracion/configuration.routes";
 import PermisosRoutes from  "../Modules/Permisos/permisos.routes";
+import dasboardRoutes from "../Modules/Dashboard/dashboard.routes";
+import resportesRoutes from "../Modules/Reportes/reportes.routes";
 const router = Router();
 
 router.get("/", (_req, res) => res.json({ ok: true, message: "Kardex API v1" }));
@@ -22,5 +24,7 @@ router.use("/movimientos", movimientosRoutes);
 router.use("/tallas", tallasRouter);
 router.use("/configuracion", ConfiguracionRoutes);
 router.use("/permisos", PermisosRoutes);
+router.use("/dashboard", dasboardRoutes);
+router.use("/reportes", resportesRoutes);
 
 export default router;
