@@ -1,4 +1,4 @@
-type RoleCode = "SUPERVISOR" | "ADMIN" | "VENDEDOR";
+export type RoleCode = "SUPERVISOR" | "ADMIN" | "VENDEDOR";
 
 export type JwtUser = {
   id: string;

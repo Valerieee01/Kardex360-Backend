@@ -1,14 +1,30 @@
 import { prisma } from "../../db/prisma";
 
-export const bodegaRepository = {
+export const bodegasRepository = {
+  create: (data: { codigo_bodega: string; nombre_bodega: string ; ubicacion?: string; estado?: boolean }) =>
+    prisma.bodegas.create({ data }),
 
-  findAll: () => prisma.bodegas.findMany(),
-    findById: (codigo: string) =>
-      prisma.bodegas.findUnique({
-        where: { codigo_bodega: codigo },
-      }),
+  findAll: () =>
+    prisma.bodegas.findMany({
+      where: { estado: true },
+      orderBy: { codigo_bodega: "asc" },
+    }),
 
-  
+  findById: (codigo_bodega: string) =>
+    prisma.bodegas.findFirst({
+      where: { codigo_bodega, estado: true },
+    }),
 
+  update: (codigo_bodega: string, data: { nombre_bodega?: string; ubicacion?: string | null; estado?: boolean }) =>
+    prisma.bodegas.update({
+      where: { codigo_bodega },
+      data,
+    }),
 
-}
+  // borrado lógico: solo apaga estado
+  softDelete: (codigo_bodega: string) =>
+    prisma.bodegas.update({
+      where: { codigo_bodega },
+      data: { estado: false },
+    }),
+};

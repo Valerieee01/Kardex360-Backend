@@ -41,4 +41,20 @@ export class AuthRepository {
       },
     });
   }
+
+    async saveAccessToken(params: {
+    userId: string;
+    tokenHash: string;
+    expiresAt: Date;
+  }) {
+    // Prisma (ejemplo)
+    return this.prisma.usuarios.update({
+      where: { identificacion: params.userId },
+      data: {
+        jwt_token: params.tokenHash,
+        jwt_expires_at: params.expiresAt
+      },
+    });
+
+  }
 }

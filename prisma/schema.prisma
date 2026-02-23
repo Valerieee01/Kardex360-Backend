@@ -54,6 +54,10 @@ model movimientos {
   bodega_destino                              String?              @db.VarChar(30)
   observacion                                 String?
   created_at                                  DateTime             @default(now()) @db.Timestamptz(6)
+  estado                                      Boolean              @default(true)
+  anulado_at                                  DateTime?            @db.Timestamptz(6)
+  anulado_por                                 String?              @db.VarChar(30)
+  anulado_motivo                              String?
   movimiento_detalle                          movimiento_detalle[]
   bodegas_movimientos_bodega_destinoTobodegas bodegas?             @relation("movimientos_bodega_destinoTobodegas", fields: [bodega_destino], references: [codigo_bodega], onDelete: NoAction, onUpdate: NoAction)
   bodegas_movimientos_bodega_origenTobodegas  bodegas?             @relation("movimientos_bodega_origenTobodegas", fields: [bodega_origen], references: [codigo_bodega], onDelete: NoAction, onUpdate: NoAction)
@@ -61,6 +65,7 @@ model movimientos {
 
   @@index([fecha], map: "idx_movimientos_fecha")
   @@index([tipo, fecha], map: "idx_movimientos_tipo_fecha")
+  @@index([estado, fecha], map: "idx_movimientos_estado_fecha")
 }
 
 model permisos {
