@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "build": "tsc -p tsconfig.json",
-  "dev": "nodemon --watch src --ext ts --exec \"npm run build && node --inspect=9229 dist/server.js\"",
-  "dev:debug": "ts-node-dev --respawn --transpile-only --inspect=9229 src/server.ts",
-  "start": "node dist/server.js",
-  "prisma:generate": "prisma generate"
-},
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "nodemon --watch src --ext ts --exec \"npm run build && node --inspect=9229 dist/server.js\"",
+    "dev:debug": "ts-node-dev --respawn --transpile-only --inspect=9229 src/server.ts",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
