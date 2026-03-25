@@ -19,27 +19,36 @@ export class DashboardRepository {
 
   // Ventas del día (suma valor_unitario * cantidad)
   async ventasDelDia() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const inicio = new Date();
+  inicio.setHours(0, 0, 0, 0);
 
-    const ventas = await this.prisma.movimiento_detalle.findMany({
-      where: {
-        movimientos: {
+  const fin = new Date();
+  fin.setHours(23, 59, 59, 999);
+
+  const ventas = await this.prisma.movimiento_detalle.findMany({
+    where: {
+      movimientos: {
+        is: {
           tipo: tipo_movimiento.VENTA,
-          fecha: { gte: today },
+          created_at: {
+            gte: inicio,
+            lte: fin,
+          },
         },
       },
-      select: {
-        cantidad: true,
-        valor_unitario: true,
-      },
-    });
+    },
+    select: {
+      cantidad: true,
+      valor_unitario: true,
+    },
+  });
 
-    return ventas.reduce((acc, v) => {
-      return acc + Number(v.valor_unitario) * v.cantidad;
-    }, 0);
-  }
+  console.log("ventas:", ventas);
 
+  return ventas.reduce((acc, item) => {
+    return acc + Number(item.valor_unitario ?? 0) * Number(item.cantidad ?? 0);
+  }, 0);
+}
   // Traspasos hoy
   traspasosHoy() {
     const today = new Date();
@@ -48,7 +57,7 @@ export class DashboardRepository {
     return this.prisma.movimientos.count({
       where: {
         tipo: tipo_movimiento.TRASPASO,
-        fecha: { gte: today },
+        created_at: { gte: today },
       },
     });
   }

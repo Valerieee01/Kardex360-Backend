@@ -57,9 +57,11 @@ export class UsuariosService {
     if (typeof input.password === "string" && input.password.length > 0) {
       data.password_hash = await bcrypt.hash(input.password, 10);
       // opcional: al cambiar password, revoca token
+      /*
       data.access_token_hash = null;
       data.access_token_expires_at = null;
       data.token_revoked_at = new Date();
+      */
     }
 
     if (Object.keys(data).length) {

@@ -6,13 +6,12 @@ export const bodegasRepository = {
 
   findAll: () =>
     prisma.bodegas.findMany({
-      where: { estado: true },
       orderBy: { codigo_bodega: "asc" },
     }),
 
-  findById: (codigo_bodega: string) =>
+  findById: (codigo_bodega: string) => 
     prisma.bodegas.findFirst({
-      where: { codigo_bodega, estado: true },
+      where: { codigo_bodega },
     }),
 
   update: (codigo_bodega: string, data: { nombre_bodega?: string; ubicacion?: string | null; estado?: boolean }) =>

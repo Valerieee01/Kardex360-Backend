@@ -11,7 +11,7 @@ export class AuthService {
     const secret = process.env.JWT_SECRET;
     if (!secret) throw new AppError("JWT_SECRET_NOT_CONFIGURED", 401);;
 
-    return jwt.sign(payload, secret, { expiresIn: "15m" });
+    return jwt.sign(payload, secret, { expiresIn: "7h" });
   }
 
   async login(input: { identification: string; password: string }) {
